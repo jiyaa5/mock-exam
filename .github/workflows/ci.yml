@@ -1,51 +1,42 @@
-name: CI Pipeline
+name: CI/CD Pipeline
 
 on:
   push:
     branches:
       - main
   pull_request:
+    branches:
+      - main
 
 jobs:
-  build-and-test:
+  build-test-docker:
     runs-on: ubuntu-latest
 
     steps:
-      # Checkout the repo
-      - name: Checkout repository
-        uses: actions/checkout@v3
+    - name: Checkout repository
+      uses: actions/checkout@v3
 
-      # Set up Python
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.9'
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: 3.11
 
-      # Install dependencies
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-          pip install pytest
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
 
-      # Run tests
-      - name: Run tests
-        run: |
-          pytest
+    - name: Run tests
+      run: pytest
 
-      # Log in to DockerHub
-      - name: Log in to DockerHub
-        uses: docker/login-action@v2
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}  # Add DockerHub username as secret
-          password: ${{ secrets.DOCKERHUB_TOKEN }}  # Add DockerHub password as secret
+    - name: Log in to DockerHub
+      uses: docker/login-action@v2
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      # 6️⃣ Build Docker image
-      - name: Build Docker image
-        run: |
-          docker build -t jiyaa5/mock-exam:latest .
+    - name: Build Docker image
+      run: docker build -t jiyaa5/mock-exam:latest .
 
-      # 7️⃣ Push Docker image to DockerHub
-      - name: Push Docker image
-        run: |
-          docker push jiyaa5/mock-exam:latest
+    - name: Push Docker image
+      run: docker push jiyaa5/mock-exam:latest

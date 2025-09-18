@@ -3,3 +3,20 @@
 # TODO: Copy code and requirements
 # TODO: Install requirements
 # TODO: Define CMD to run app.py
+FROM python:3.9-slim
+
+WORKDIR /app
+
+COPY requirements.txt .
+
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY . .
+
+CMD["python","app.py"]
+
+
+
+# Command to run the app
+# (change 'app:app' if your app variable or file name is different)
+CMD ["python", "app.py"]
